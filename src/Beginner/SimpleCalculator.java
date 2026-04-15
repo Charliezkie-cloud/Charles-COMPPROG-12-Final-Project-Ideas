@@ -6,10 +6,24 @@ import java.util.Scanner;
  * Console Simple Calculator Program by Charles Henry M. Tinoy Jr.
  */
 public class SimpleCalculator {
+    /**
+     * Displays the border (E.g. ==========)
+     * @param length The length of the border
+     */
+    private static void displayBorder(int length) {
+        for (int i = 0; i < length; i++)
+            System.out.print("=");
+        System.out.println();
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            displayBorder(35);
+            System.out.println("\t\tSIMPLE CALCULATOR");
+            displayBorder(35);
+
             // Get the first operand
             System.out.print("Enter the first operand: ");
             while (!scanner.hasNextDouble()) {

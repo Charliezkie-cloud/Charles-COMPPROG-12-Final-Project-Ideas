@@ -7,25 +7,33 @@ import java.util.Scanner;
  */
 public class StudentGradeCalculator {
     // COLLEGE GRADES
-    private final static double COLLEGE_OUTSTANDING_GRADE = 1.50f;
-    private final static double COLLEGE_VSATISFACTORY_GRADE = 2.00f;
-    private final static double COLLEGE_SATISFACTORY_GRADE = 2.50f;
-    private final static double COLLEGE_FAIRLY_SATISFACTORY_GRADE = 3.00f;
+    private static final double COLLEGE_OUTSTANDING_GRADE = 1.50f;
+    private static final double COLLEGE_VSATISFACTORY_GRADE = 2.00f;
+    private static final double COLLEGE_SATISFACTORY_GRADE = 2.50f;
+    private static final double COLLEGE_FAIRLY_SATISFACTORY_GRADE = 3.00f;
 
     // K TO 12 GRADES
-    private final static double K12_OUTSTANDING_GRADE = 90.00f;
+    private static final double K12_OUTSTANDING_GRADE = 90.00f;
 
     // Very Satisfactory K to 12 grades
-    private final static double K12_VSATISFACTORY_GRADE_MIN = 85.00f;
-    private final static double K12_VSATISFACTORY_GRADE_MAX = 89.00f;
+    private static final double K12_VSATISFACTORY_GRADE_MIN = 85.00f;
 
     // Satisfactory K to 12 grades
-    private final static double K12_SATISFACTORY_GRADE_MIN = 80.00f;
-    private final static double K12_SATISFACTORY_GRADE_MAX = 84.00f;
+    private static final double K12_SATISFACTORY_GRADE_MIN = 80.00f;
 
     // Fairly Satisfactory K to 12 grades
-    private final static double K12_FAIRLY_SATISFACTORY_GRADE_MIN = 75.00f;
-    private final static double K12_FAIRLY_SATISFACTORY_GRADE_MAX = 79.00f;
+    private static final double K12_FAIRLY_SATISFACTORY_GRADE_MIN = 75.00f;
+
+    /**
+     * Displays the border (E.g. ==========)
+     * @param length The length of the border
+     */
+    private static void displayBorder(int length) {
+        for (int i = 0; i < length; i++)
+            System.out.print("=");
+
+        System.out.println();
+    }
 
     /**
      * Displays the border (E.g. ===== Charles Henry M. Tinoy Jr. =====)
@@ -86,7 +94,9 @@ public class StudentGradeCalculator {
 
         boolean isCollege;
 
-        displayBorder(11, "OPTIONS");
+        displayBorder(31);
+        System.out.println("\tSTUDENT GRADE CALCULATOR");
+        displayBorder(31);
         System.out.println("COLLEGE GRADING SYSTEM\t\t[1]");
         System.out.println("K TO 12 GRADING SYSTEM\t\t[2]");
         System.out.println("EXIT PROGRAM\t\t\t\t[3]");
