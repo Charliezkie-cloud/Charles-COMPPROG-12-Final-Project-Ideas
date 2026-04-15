@@ -45,7 +45,7 @@ public class SimpleCalculator {
                 System.out.print("Choose an operator: ");
                 char operator = scanner.next().charAt(0);
 
-                /**
+                /*
                  * Check if the operator is divide and the second operand is equal to 0
                  * If the condition is true then display the error
                  */
@@ -54,7 +54,7 @@ public class SimpleCalculator {
                     continue;
                 }
 
-                /**
+                /*
                  * Check if the operator is valid
                  * If the condition is true then display the error and show the operator input again
                  */
@@ -77,7 +77,7 @@ public class SimpleCalculator {
                 break;
             }
 
-            /**
+            /*
              * Ask the user if he/she will still want to continue the program
              * If the condition is false then exit the program
              */

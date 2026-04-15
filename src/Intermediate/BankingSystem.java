@@ -95,7 +95,7 @@ public class BankingSystem {
              }
              double amountToWithdraw = scanner.nextDouble();
 
-             /**
+             /*
               * Check if the new current balance is not negative
               * If it's not negative then perform the substraction of the current balance
               */
