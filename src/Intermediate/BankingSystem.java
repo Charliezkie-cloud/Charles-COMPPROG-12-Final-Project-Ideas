@@ -124,6 +124,10 @@ public class BankingSystem {
         System.out.println("Before we proceed with your bank account,\nyou must enter your account name.");
         System.out.print("Enter your account name: ");
         ACCOUNT_NAME = scanner.nextLine();
+        while (ACCOUNT_NAME.trim().isEmpty()) {
+            System.out.print("Account name cannot be empty, please try again: ");
+            ACCOUNT_NAME = scanner.nextLine();
+        }
 
         while (true) {
             displayBorder(7, "OPTIONS");
