@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * The model of the Student,
- * If wala paka kahibalo ani goodluck nalang pero actually basic rani sya don't worry ;D
+ * The model of the Student
+ * PS: If wala paka kahibalo ani goodluck nalang
+ *      pero actually basic rani sya don't worry ;D
  */
 class Student {
     private int studentId;
@@ -47,7 +48,15 @@ class Student {
 
     /// GETTERS
     public int getStudentId() { return studentId; }
-    public String getStudentName() { return name; }
+    public String getName() { return name; }
+    public int getYearLevel() { return yearLevel; }
+    public double getGPA() { return GPA; }
+
+    /// SETTERS
+    public void setName(String name) { this.name = name; }
+    public void setCourse(String course) { this.course = course; }
+    public void setYearLevel(int yearLevel) { this.yearLevel = yearLevel; }
+    public void setGPA(double GPA) { this.GPA = GPA; }
 
     /**
      * Polymorphism for "toString()" method
@@ -283,7 +292,7 @@ public class StudentRecordManager {
          */
         String finalStudentName = studentName;
         Student result = STUDENTS.stream()
-                .filter(student -> student.getStudentName().equalsIgnoreCase(finalStudentName))
+                .filter(student -> student.getName().equalsIgnoreCase(finalStudentName))
                 .findFirst()
                 .orElse(null);
 
@@ -328,6 +337,147 @@ public class StudentRecordManager {
     }
 
     /**
+     * Updates the student by ID
+     * @param scanner Scanner buffer
+     */
+    private static void updateStudent(Scanner scanner) {
+        displayBorder(10, "UPDATE STUDENT");
+
+        // Get the student
+        System.out.print("Enter the student ID: ");
+        while (!scanner.hasNextInt()) {
+            System.out.print("Invalid input, please try again: ");
+            scanner.next();
+            scanner.nextLine();
+        }
+        int studentId = scanner.nextInt();
+
+        // Get the student by its ID
+        Student result = STUDENTS.stream()
+                .filter(student -> student.getStudentId() == studentId)
+                .findFirst()
+                .orElse(null);
+
+        // If nothing match then cancel the operation
+        if (result == null) {
+            System.out.printf("Unable to find a student with ID %d\n", studentId);
+            return;
+        }
+
+        // Otherwise perform the update
+        displayBorder(10, "CURRENT STUDENT INFORMATION");
+        result.toString();
+        displayBorder(49);
+        System.out.println("Press the \"Enter\" key to skip an input.");
+
+        // Clear buffer
+        scanner.nextLine();
+
+        // Get student new name
+        System.out.print("Enter the new name: ");
+        String studentName = scanner.nextLine();
+
+        // Get student new course
+        System.out.print("Enter the new course: ");
+        String studentCourse = scanner.nextLine();
+
+        // Get student new year level
+        System.out.print("Enter the new year level: ");
+        String yearLevelInput = scanner.nextLine();
+        int studentYearLevel = result.getYearLevel();
+        while (true) {
+            if (yearLevelInput.isEmpty()) break;
+            try {
+                studentYearLevel = Integer.parseInt(yearLevelInput);
+                break;
+            } catch (NumberFormatException ex) {
+                System.out.print("Invalid input, please try again: ");
+                yearLevelInput = scanner.nextLine();
+            }
+        }
+
+        // Get student new GPA
+        System.out.print("Enter the new GPA: ");
+        String gpaInput = scanner.nextLine();
+        double studentGPA = result.getGPA();
+        while (true) {
+            if (gpaInput.isEmpty()) break;
+            try {
+                studentGPA = Double.parseDouble(gpaInput);
+                break;
+            } catch (NumberFormatException ex) {
+                System.out.print("Invalid input, please try again: ");
+                gpaInput = scanner.nextLine();
+            }
+        }
+
+        if (!studentName.trim().isEmpty())
+            result.setName(studentName);
+        if (!studentCourse.trim().isEmpty())
+            result.setCourse(studentCourse);
+
+        result.setYearLevel(studentYearLevel);
+        result.setGPA(studentGPA);
+
+        System.out.printf("%s record has successfully been updated.\n", result.getName());
+    }
+
+    /**
+     * Deletes the student by ID
+     * @param scanner Scanner buffer
+     */
+    private static void deleteStudent(Scanner scanner) {
+        displayBorder(10, "DELETE STUDENT");
+
+        // Get the student ID
+        System.out.print("Enter the student ID: ");
+        while (!scanner.hasNextInt()) {
+            System.out.print("Invalid input, please try again: ");
+            scanner.next();
+            scanner.nextLine();
+        }
+        int studentId = scanner.nextInt();
+
+        // Get the student by ID
+        Student result = STUDENTS.stream()
+                .filter(student -> student.getStudentId() == studentId)
+                .findFirst()
+                .orElse(null);
+
+        // If not match then close the operation
+        if (result == null) {
+            System.out.printf("Unable to find student with ID %d\n", studentId);
+            return;
+        }
+
+        // Clear buffer
+        scanner.nextLine();
+
+        /*
+         * Otherwise show the confirmation input
+         * And delete the student
+         */
+        System.out.printf("Are you sure you want to delete %s from the record?\n", result.getName());
+        System.out.print("Confirm deletion [y/n]: ");
+        String confirmationInput = scanner.nextLine();
+
+        char confirmation = confirmationInput.toLowerCase().toCharArray()[0];
+        while (true) {
+            if (confirmation == 'y') {
+                STUDENTS.remove(result);
+                System.out.printf("%s has successfully been deleted from the record.\n", result.getName());
+                break;
+            } else if (confirmation == 'n') {
+                System.out.println("Deletion cancelled.");
+                break;
+            } else {
+                System.out.println("Invalid option, please try again.");
+                confirmation = scanner.nextLine().toCharArray()[0];
+            }
+        }
+    }
+
+    /**
      * Debug type shit- ni charles
      */
     private static void debugTypeShit() {
@@ -363,6 +513,8 @@ public class StudentRecordManager {
             if (userOption == 1) addStudent(scanner);
             else if (userOption == 2) displayAllStudents();
             else if (userOption == 3) searchStudent(scanner);
+            else if (userOption == 4) updateStudent(scanner);
+            else if (userOption == 5) deleteStudent(scanner);
             else if (userOption == 6) break;
             else System.out.println("Invalid option, please try again.");
 
