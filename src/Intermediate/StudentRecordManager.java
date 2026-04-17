@@ -9,7 +9,7 @@ import java.util.Scanner;
  *      pero actually basic rani sya don't worry ;D
  */
 class Student {
-    private int studentId;
+    private final int studentId;
     private String name;
     private String course;
     private int yearLevel;
