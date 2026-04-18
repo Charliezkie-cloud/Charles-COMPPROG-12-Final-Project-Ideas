@@ -7,6 +7,7 @@
 2. Open with idea ``idea Charles-COMPPROG-12-Final-Project-Ideas``
 3. Enjoy!
 
+## Projects Status
 **Status Legend**
 | Emoji | Description |
 | --- | --- |
@@ -14,7 +15,6 @@
 | ⚠️ | Ongoing |
 | ❌ | Not done |
 
-## Projects Status
 | Difficulty | Name | Status |
 | --- | --- | --- |
 | Beginner | Number Guessing Game | ✅ |
