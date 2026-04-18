@@ -7,15 +7,22 @@
 2. Open with idea ``idea Charles-COMPPROG-12-Final-Project-Ideas``
 3. Enjoy!
 
+**Status Legend**
+| Emoji | Description |
+| --- | --- |
+| ✅ | Done |
+| ⚠️ | Ongoing |
+| ❌ | Not done |
+
 ## Projects Status
 | Difficulty | Name | Status |
 | --- | --- | --- |
-| Beginner | Number Guessing Game | ✅ Done ;D |
-| Beginner | Simple Calculator | ✅ Done ;D |
-| Beginner | Student Grade Calculator | ✅ Done ;D |
-| Intermediate | Quiz Application | ✅ Done ;D |
-| Intermediate | Student Record Manager | ✅ Done ;D |
-| Intermediate | Banking System | ✅ Done ;D |
-| Advanced | Inventory System | ❌ Nuh uh. |
-| Advanced | Simple Login System | ❌ Nuh uh. |
-| Advanced | Task Manager | ❌ Nuh uh. |
+| Beginner | Number Guessing Game | ✅ |
+| Beginner | Simple Calculator | ✅ |
+| Beginner | Student Grade Calculator | ✅ |
+| Intermediate | Quiz Application | ✅ |
+| Intermediate | Student Record Manager | ✅ |
+| Intermediate | Banking System | ✅ |
+| Advanced | Inventory System | ⚠️ |
+| Advanced | Simple Login System | ⚠️ |
+| Advanced | Task Manager | ⚠️ |
