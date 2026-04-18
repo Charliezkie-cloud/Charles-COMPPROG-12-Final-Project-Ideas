@@ -25,6 +25,14 @@ class Product implements Serializable {
         this.quantity = quantity;
     }
 
+    /// GETTERES
+    public int getId() { return id; }
+
+    /// SETTERS
+    public void setName(String name) { this.name = name; }
+    public void setCategory(String category) { this.category = category; }
+    public void setPrice(BigDecimal price) { this.price = price; }
+
     @Override
     public String toString() {
         return String.format("%-5d\t\t%-15s\t\t%-10s\t\t%-10.2f\t\t%-10d", id, name, category, price, quantity);
@@ -40,6 +48,72 @@ public class InventorySystem {
 
     /// PRODUCTS
     private static ArrayList<Product> PRODUCTS = new ArrayList<>();
+
+    /**
+     * Reads the binary database and store it in the PRODUCTS array list.
+     */
+    private static void readDatabase() {
+        if (!Files.exists(Paths.get(DATABASE_PATH)))
+            writeDatabase();
+
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(DATABASE_PATH))) {
+            PRODUCTS = (ArrayList<Product>) inputStream.readObject();
+        } catch (IOException | ClassNotFoundException ex) {
+            System.err.printf("Something went wrong while writing the database, error: %s\n", ex.getMessage());
+        }
+    }
+
+    /**
+     * Writes the PRODUCTS array list to binary.
+     */
+    private static void writeDatabase() {
+        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(DATABASE_PATH))) {
+            outputStream.writeObject(PRODUCTS);
+        } catch (IOException ex) {
+            System.err.printf("Something went wrong while reading the database, error: %s\n", ex.getMessage());
+        }
+    }
+
+    /**
+     * Returns the product by ID
+     * @return The Product
+     */
+    private static Product getProductById(Scanner scanner) {
+        // Clear buffer
+        scanner.nextLine();
+
+        // Get the ID
+        int id;
+        System.out.print("Enter the ID: ");
+        do {
+            String idInput = scanner.nextLine();
+
+            if (idInput.trim().isEmpty()) {
+                System.out.print("ID can't be empty, please try again: ");
+                continue;
+            }
+
+            try {
+                id = Integer.parseInt(idInput);
+                break;
+            } catch (NumberFormatException ex) {
+                System.out.print("Invalid input, please try again: ");
+            }
+        } while (true);
+
+        int finalId = id;
+        Product result = PRODUCTS.stream()
+                .filter(product -> product.getId() == finalId)
+                .findFirst()
+                .orElse(null);
+
+        if (result == null) {
+            System.out.printf("Unable to find a product with ID %d\n", finalId);
+            return null;
+        }
+
+        return result;
+    }
 
     static {
         readDatabase();
@@ -72,31 +146,6 @@ public class InventorySystem {
     }
 
     /**
-     * Reads the binary database and store it in the PRODUCTS array list.
-     */
-    private static void readDatabase() {
-        if (!Files.exists(Paths.get(DATABASE_PATH)))
-            writeDatabase();
-
-        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(DATABASE_PATH))) {
-            PRODUCTS = (ArrayList<Product>) inputStream.readObject();
-        } catch (IOException | ClassNotFoundException ex) {
-            System.err.printf("Something went wrong while writing the database, error: %s\n", ex.getMessage());
-        }
-    }
-
-    /**
-     * Writes the PRODUCTS array list to binary.
-     */
-    private static void writeDatabase() {
-        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(DATABASE_PATH))) {
-            outputStream.writeObject(PRODUCTS);
-        } catch (IOException ex) {
-            System.err.printf("Something went wrong while reading the database, error: %s\n", ex.getMessage());
-        }
-    }
-
-    /**
      * Performs the add product operation
      * @param scanner Scanner buffer
      */
@@ -119,7 +168,21 @@ public class InventorySystem {
 
             try {
                 id = Integer.parseInt(idInput);
-                break;
+
+                /*
+                 * Check if the ID already existed.
+                 */
+                int finalId = id;
+                Product result = PRODUCTS.stream()
+                        .filter(product -> product.getId() == finalId)
+                        .findFirst()
+                        .orElse(null);
+
+                if (result == null)
+                    break;
+
+                if (result.getId() == finalId)
+                    System.out.print("This ID already existed, please choose another ID: ");
             } catch (NumberFormatException ex) {
                 System.out.print("Invalid input, please try again: ");
             }
@@ -196,18 +259,68 @@ public class InventorySystem {
      * View all the products in table layout.
      */
     private static void viewProducts() {
-        readDatabase();
-
         displayBorder(30, "ALL PRODUCTS");
-        System.out.printf("%-5s\t\t%-15s\t\t%-10s\t\t%-10s\t\t%-10s\n", "ID", "Name", "Category", "Price", "Quantity");
 
         if (PRODUCTS.size() <= 0) {
             System.out.println("Looks like you haven't added any products yet.");
             return;
         }
 
+        System.out.printf("%-5s\t\t%-15s\t\t%-10s\t\t%-10s\t\t%-10s\n", "ID", "Name", "Category", "Price", "Quantity");
         for (Product product : PRODUCTS)
             System.out.println(product.toString());
+    }
+
+    private static void updateProduct(Scanner scanner) {
+        displayBorder(10, "UPDATE PRODUCT");
+
+        Product result = getProductById(scanner);
+        if (result == null) return;
+
+        System.out.println("Press \"Enter\" key to skip the input");
+
+        // Get the new product name
+        System.out.print("Enter the new name: ");
+        String name = scanner.nextLine();
+
+        if (name.trim().isEmpty())
+            System.out.println("Name skipped.");
+
+        // Get the new product category
+        System.out.print("Enter the new category: ");
+        String category = scanner.nextLine();
+        if (category.trim().isEmpty())
+            System.out.println("Category skipped.");
+
+        // Get the new product price
+        System.out.print("Enter the new price: ");
+        BigDecimal price = null;
+        do {
+            String priceInput = scanner.nextLine();
+
+            if (priceInput.trim().isEmpty()) {
+                System.out.println("Price skipped.");
+                break;
+            }
+
+            try {
+                price = BigDecimal.valueOf(Double.parseDouble(priceInput));
+                break;
+            } catch (NumberFormatException ex) {
+                System.out.print("Invalid input, please try again: ");
+            }
+        } while (true);
+
+        if (!name.trim().isEmpty())
+            result.setName(name);
+        if (!category.trim().isEmpty())
+            result.setCategory(category);
+        if (price != null)
+            result.setPrice(price);
+
+        writeDatabase();
+
+        System.out.println("The product has successfully been updated.");
     }
 
     public static void main(String[] args) {
@@ -240,6 +353,7 @@ public class InventorySystem {
 
             if (userOption == 1) addProduct(scanner);
             if (userOption == 2) viewProducts();
+            if (userOption == 3) updateProduct(scanner);
             if (userOption == 9)
                 break;
         } while (true);
