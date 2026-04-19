@@ -261,7 +261,7 @@ public class InventorySystem {
     private static void viewProducts() {
         displayBorder(30, "ALL PRODUCTS");
 
-        if (PRODUCTS.size() < 1) {
+        if (PRODUCTS.isEmpty()) {
             System.out.println("Looks like you haven't added any products yet.");
             return;
         }
@@ -378,7 +378,7 @@ public class InventorySystem {
 
         displayBorder(30, "RESULT");
         System.out.printf("%-5s\t\t%-15s\t\t%-10s\t\t%-10s\t\t%-10s\n", "ID", "Name", "Category", "Price", "Quantity");
-        System.out.println(result.toString());
+        System.out.println(result);
     }
 
     public static void main(String[] args) {
