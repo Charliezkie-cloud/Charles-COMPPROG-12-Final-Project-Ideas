@@ -44,7 +44,7 @@ class Product implements Serializable {
  */
 public class InventorySystem {
     ///  DATABASE PATH
-    private static final String DATABASE_PATH = "database.bin";
+    private static final String DATABASE_PATH = "inventory_system_database.bin";
 
     /// PRODUCTS
     private static ArrayList<Product> PRODUCTS = new ArrayList<>();
@@ -75,10 +75,10 @@ public class InventorySystem {
     }
 
     /**
-     * Returns the product by ID
+     * Returns the product by search ID
      * @return The Product
      */
-    private static Product getProductById(Scanner scanner) {
+    private static Product searchProductById(Scanner scanner) {
         // Clear buffer
         scanner.nextLine();
 
@@ -261,7 +261,7 @@ public class InventorySystem {
     private static void viewProducts() {
         displayBorder(30, "ALL PRODUCTS");
 
-        if (PRODUCTS.size() <= 0) {
+        if (PRODUCTS.size() < 1) {
             System.out.println("Looks like you haven't added any products yet.");
             return;
         }
@@ -271,10 +271,14 @@ public class InventorySystem {
             System.out.println(product.toString());
     }
 
+    /**
+     * Performs the update product by ID
+     * @param scanner Scanner buffer
+     */
     private static void updateProduct(Scanner scanner) {
         displayBorder(10, "UPDATE PRODUCT");
 
-        Product result = getProductById(scanner);
+        Product result = searchProductById(scanner);
         if (result == null) return;
 
         System.out.println("Press \"Enter\" key to skip the input");
@@ -323,6 +327,60 @@ public class InventorySystem {
         System.out.println("The product has successfully been updated.");
     }
 
+    /**
+     * Performs the delete product by ID
+     * @param scanner Scanner buffer
+     */
+    private static void deleteProduct(Scanner scanner) {
+        displayBorder(10, "DELETE PRODUCT");
+
+        Product result = searchProductById(scanner);
+        if (result == null) return;
+
+        // Display the deletion confirmation
+        System.out.println("Are you sure you want to delete this product?");
+        System.out.print("Yes or no [y/n]: ");
+        while (true) {
+            String optionInput = scanner.nextLine();
+
+            if (optionInput.trim().isEmpty()) {
+                System.out.print("Option can't be empty, please try again: ");
+                continue;
+            }
+
+            char option = optionInput.toLowerCase().charAt(0);
+
+            if (option == 'y') {
+                PRODUCTS.remove(result);
+                System.out.printf("Product ID %d has been deleted.\n", result.getId());
+                writeDatabase();
+                return;
+            }
+
+            if (option == 'n') {
+                System.out.println("Operation cancelled.");
+                break;
+            }
+
+            System.out.print("Invalid option, please try again: ");
+        }
+    }
+
+    /**
+     * Searches the product by ID
+     * @param scanner Scanner buffer
+     */
+    private static void searchProduct(Scanner scanner) {
+        displayBorder(10, "SEARCH PRODUCT");
+
+        Product result = searchProductById(scanner);
+        if (result == null) return;
+
+        displayBorder(30, "RESULT");
+        System.out.printf("%-5s\t\t%-15s\t\t%-10s\t\t%-10s\t\t%-10s\n", "ID", "Name", "Category", "Price", "Quantity");
+        System.out.println(result.toString());
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -354,6 +412,8 @@ public class InventorySystem {
             if (userOption == 1) addProduct(scanner);
             if (userOption == 2) viewProducts();
             if (userOption == 3) updateProduct(scanner);
+            if (userOption == 4) deleteProduct(scanner);
+            if (userOption == 5) searchProduct(scanner);
             if (userOption == 9)
                 break;
         } while (true);
