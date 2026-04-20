@@ -4,14 +4,20 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
- * Product model
+ * Product model (Hybrid model)
+ * PS: Again if wala ka kahibalo ani goodluck nalang jud.
  */
 class Product implements Serializable {
-    private int id;
+    /// CURRENCY FORMATTING FOR PRODUCT MODEL
+    private final NumberFormat US_FORMAT = NumberFormat.getCurrencyInstance(Locale.US);
+
+    private final int id;
     private String name;
     private String category;
     private BigDecimal price;
@@ -33,9 +39,21 @@ class Product implements Serializable {
     public void setCategory(String category) { this.category = category; }
     public void setPrice(BigDecimal price) { this.price = price; }
 
+    /// BUSINESS LOGIC
+    public void addStock(int amount) { this.quantity += amount; }
+    public boolean subtractStock(int amount) {
+        if (this.quantity - amount >= 0) {
+            this.quantity -= amount;
+            return true;
+        }
+
+        return false;
+    }
+
+    /// POLYMORPH
     @Override
     public String toString() {
-        return String.format("%-5d\t\t%-15s\t\t%-10s\t\t%-10.2f\t\t%-10d", id, name, category, price, quantity);
+        return String.format("%-5d\t\t%-15s\t\t%-10s\t\t%-10s\t\t%-10d", id, name, category, US_FORMAT.format(price), quantity);
     }
 }
 
@@ -45,7 +63,6 @@ class Product implements Serializable {
 public class InventorySystem {
     ///  DATABASE PATH
     private static final String DATABASE_PATH = "inventory_system_database.bin";
-
     /// PRODUCTS
     private static ArrayList<Product> PRODUCTS = new ArrayList<>();
 
@@ -115,6 +132,9 @@ public class InventorySystem {
         return result;
     }
 
+    /*
+     * Static initialization
+     */
     static {
         readDatabase();
     }
@@ -218,7 +238,7 @@ public class InventorySystem {
             }
 
             try {
-                price = BigDecimal.valueOf(Double.parseDouble(priceInput));
+                price = new BigDecimal(priceInput);
                 break;
             } catch (NumberFormatException ex) {
                 System.out.print("Invalid input, please try again: ");
@@ -308,7 +328,7 @@ public class InventorySystem {
             }
 
             try {
-                price = BigDecimal.valueOf(Double.parseDouble(priceInput));
+                price = new BigDecimal(priceInput);
                 break;
             } catch (NumberFormatException ex) {
                 System.out.print("Invalid input, please try again: ");
@@ -381,6 +401,101 @@ public class InventorySystem {
         System.out.println(result);
     }
 
+    /**
+     * Performs the stock in operation by ID
+     * @param scanner Scanner buffer
+     */
+    private static void stockIn(Scanner scanner) {
+        displayBorder(10, "STOCK IN");
+
+        Product result = searchProductById(scanner);
+        if (result == null) return;
+
+        // Get the stock amount input
+        System.out.print("Enter the amount of stock to put in: ");
+        int stock;
+
+        while (true) {
+            String stockInput = scanner.nextLine();
+
+            if (stockInput.trim().isEmpty()) {
+                System.out.print("Stock input can't be empty, please try again: ");
+                continue;
+            }
+
+            try {
+                stock = Integer.parseInt(stockInput);
+                break;
+            } catch (NumberFormatException ex) {
+                System.out.print("Invalid input, please try again: ");
+            }
+        }
+
+        /*
+         * Add the stock
+         * Then write to database
+         */
+        result.addStock(stock);
+        writeDatabase();
+
+        System.out.printf(
+                "%d %s has successfully been added to product %d\n",
+                stock,
+                stock > 0 ? "stocks" : "stock",
+                result.getId()
+        );
+    }
+
+    /**
+     * Performs the stock out operation by ID
+     * @param scanner Scanner buffer
+     */
+    private static void stockOut(Scanner scanner) {
+        displayBorder(10, "STOCK OUT");
+
+        Product result = searchProductById(scanner);
+        if (result == null) return;
+
+        // Get the stock amount input
+        System.out.print("Enter the amount of stock to pull off: ");
+        int stock;
+
+        while (true) {
+            String stockInput = scanner.nextLine();
+
+            if (stockInput.trim().isEmpty()) {
+                System.out.print("Stock input can't be empty, please try again: ");
+                continue;
+            }
+
+            try {
+                stock = Integer.parseInt(stockInput);
+
+                if (stock <= 0) {
+                    System.out.print("Stock input can't be empty or negative, please try again: ");
+                    continue;
+                }
+
+                /*
+                 * Check if the stock is negative
+                 * If not then Subtract the stock
+                 * Then write to database
+                 */
+                if (!result.subtractStock(stock)) {
+                    System.out.print("You can't have a negative stock, please try again: ");
+                    continue;
+                }
+
+                writeDatabase();
+                System.out.printf("%d stocks has successfully been subtract to product %d\n", stock, result.getId());
+
+                return;
+            } catch (NumberFormatException ex) {
+                System.out.print("Invalid input, please try again: ");
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -414,6 +529,8 @@ public class InventorySystem {
             if (userOption == 3) updateProduct(scanner);
             if (userOption == 4) deleteProduct(scanner);
             if (userOption == 5) searchProduct(scanner);
+            if (userOption == 6) stockIn(scanner);
+            if (userOption == 7) stockOut(scanner);
             if (userOption == 9)
                 break;
         } while (true);
