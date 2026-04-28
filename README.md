@@ -23,6 +23,6 @@
 | Intermediate | Quiz Application | ✅ |
 | Intermediate | Student Record Manager | ✅ |
 | Intermediate | Banking System | ✅ |
-| Advanced | Inventory System | ✅ |
+| Advanced | Inventory System | ⚠️ |
 | Advanced | Simple Login System | ⚠️ |
 | Advanced | Task Manager | ⚠️ |
